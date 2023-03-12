@@ -2,8 +2,6 @@ import throttle from 'lodash.throttle';
 
 
 const formEl = document.querySelector('.feedback-form');
-const emailEl = document.querySelector('.feedback-form input');
-const messageEl = document.querySelector('.feedback-form textarea');
 formEl.addEventListener('input', throttle(handleInput,500));
 formEl.addEventListener('submit', handleFormSubmit);
 
@@ -11,7 +9,8 @@ const STORAGE_KEY = "feedback-form-state";
 
 populateForm();
 
-const feedbackForm = {};
+let feedbackForm = {};
+
 function handleInput({target}) {
     feedbackForm[target.name] = target.value;
     const feedbackFormJSON = JSON.stringify(feedbackForm);
@@ -23,13 +22,26 @@ function handleFormSubmit(event) {
     event.currentTarget.reset();
     localStorage.removeItem(STORAGE_KEY);
     console.log(feedbackForm);
+    feedbackForm = {};
+    
 }
+
 
 function populateForm() {
-    const formData = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (formData) {
-        emailEl.value = formData.email;
-        messageEl.value = formData.message;
+    const feedbackForm = localStorage.getItem(STORAGE_KEY);
+
+    if (feedbackForm === null) {
+        return;
     }
+     try {
+            const feedbackFormJS = JSON.parse(feedbackForm);
+            const data = Object.entries(feedbackFormJS);
+            data.forEach(([name,value]) => {
+                formEl.elements[name].value = value;
+            })
+        } catch (error) {
+            console.log("not valid JSON");
+        }
 }
 
+   
