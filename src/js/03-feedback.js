@@ -35,8 +35,8 @@ function populateForm() {
     }
      try {
             const feedbackFormJS = JSON.parse(feedbackForm);
-            const data = Object.entries(feedbackFormJS);
-            data.forEach(([name,value]) => {
+            const formData = Object.entries(feedbackFormJS);
+            formData.forEach(([name,value]) => {
                 formEl.elements[name].value = value;
             })
         } catch (error) {
